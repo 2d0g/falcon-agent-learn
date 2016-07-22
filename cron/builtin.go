@@ -24,7 +24,7 @@ func syncBuiltinMetrics() {
 
 	for {
 		time.Sleep(duration)
-
+		// 监控端口、目录大小、进程
 		var ports = []int64{}
 		var paths = []string{}
 		var procs = make(map[string]map[int]string)
@@ -79,7 +79,7 @@ func syncBuiltinMetrics() {
 					log.Println("metric ParseInt timeout failed:", err)
 				}
 			}
-
+			// {metric: net.port.listen, tags: port=22}
 			if metric.Metric == g.NET_PORT_LISTEN {
 				arr := strings.Split(metric.Tags, "=")
 				if len(arr) != 2 {
@@ -94,7 +94,8 @@ func syncBuiltinMetrics() {
 
 				continue
 			}
-
+			// metric: du.bs tags: path=/home/works/logs
+			// du -bs /home/works/logs
 			if metric.Metric == g.DU_BS {
 				arr := strings.Split(metric.Tags, "=")
 				if len(arr) != 2 {
@@ -104,7 +105,8 @@ func syncBuiltinMetrics() {
 				paths = append(paths, strings.TrimSpace(arr[1]))
 				continue
 			}
-
+			//mereic: proc.num tags: name=crond
+			//或者metric: proc.num tags: cmdline=cfg.json
 			if metric.Metric == g.PROC_NUM {
 				arr := strings.Split(metric.Tags, ",")
 
