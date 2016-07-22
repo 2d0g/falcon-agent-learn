@@ -17,6 +17,7 @@ func configPageRoutes() {
 				return
 			}
 		}
+		// 启动fileServer暴露public下面的文件, 可直接访问静态文件
 		http.FileServer(http.Dir(filepath.Join(g.Root, "/public"))).ServeHTTP(w, r)
 	})
 

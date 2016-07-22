@@ -13,12 +13,14 @@ import (
 	"time"
 )
 
+// 持续间隔执行plugin
 type PluginScheduler struct {
 	Ticker *time.Ticker
 	Plugin *Plugin
 	Quit   chan struct{}
 }
 
+// 根据plugin创建新的schedule
 func NewPluginScheduler(p *Plugin) *PluginScheduler {
 	scheduler := PluginScheduler{Plugin: p}
 	scheduler.Ticker = time.NewTicker(time.Duration(p.Cycle) * time.Second)
@@ -26,6 +28,7 @@ func NewPluginScheduler(p *Plugin) *PluginScheduler {
 	return &scheduler
 }
 
+// plugin调度,间隔执行PluginRun,除非收到quit消息
 func (this *PluginScheduler) Schedule() {
 	go func() {
 		for {
@@ -40,10 +43,12 @@ func (this *PluginScheduler) Schedule() {
 	}()
 }
 
+// 停止plugin调度
 func (this *PluginScheduler) Stop() {
 	close(this.Quit)
 }
 
+// 执行插件,读取插件运行返回数据并上报transfer
 func PluginRun(plugin *Plugin) {
 
 	timeout := plugin.Cycle*1000 - 500

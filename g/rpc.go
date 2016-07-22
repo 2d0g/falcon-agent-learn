@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// 简单封装rpc.Cilent
 type SingleConnRpcClient struct {
 	sync.Mutex
 	rpcClient *rpc.Client
@@ -16,6 +17,7 @@ type SingleConnRpcClient struct {
 	Timeout   time.Duration
 }
 
+// 关闭rpc
 func (this *SingleConnRpcClient) close() {
 	if this.rpcClient != nil {
 		this.rpcClient.Close()
@@ -23,6 +25,7 @@ func (this *SingleConnRpcClient) close() {
 	}
 }
 
+// 保证rpc存在,为空则重新创建, 如果server宕机, 死循环????
 func (this *SingleConnRpcClient) insureConn() {
 	if this.rpcClient != nil {
 		return
@@ -35,7 +38,7 @@ func (this *SingleConnRpcClient) insureConn() {
 		if this.rpcClient != nil {
 			return
 		}
-
+		// 根据timeout和server地址去连接rpc的server
 		this.rpcClient, err = net.JsonRpcClient("tcp", this.RpcServer, this.Timeout)
 		if err == nil {
 			return
@@ -53,11 +56,12 @@ func (this *SingleConnRpcClient) insureConn() {
 	}
 }
 
+// rpc client调用hbs函数
 func (this *SingleConnRpcClient) Call(method string, args interface{}, reply interface{}) error {
-
+	// 加锁保证一个agent只与server有一个连接,保证性能
 	this.Lock()
 	defer this.Unlock()
-
+    // 保证rpc连接可用
 	this.insureConn()
 
 	timeout := time.Duration(50 * time.Second)
@@ -67,7 +71,7 @@ func (this *SingleConnRpcClient) Call(method string, args interface{}, reply int
 		err := this.rpcClient.Call(method, args, reply)
 		done <- err
 	}()
-
+	// 超时控制
 	select {
 	case <-time.After(timeout):
 		log.Printf("[WARN] rpc call timeout %v => %v", this.rpcClient, this.RpcServer)

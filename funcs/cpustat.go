@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// 历史数据长度
 const (
 	historyCount int = 2
 )
@@ -15,6 +16,7 @@ var (
 	psLock          = new(sync.RWMutex)
 )
 
+// 上锁, 修改history数组,最新数据放到第一个位置
 func UpdateCpuStat() error {
 	ps, err := nux.CurrentProcStat()
 	if err != nil {
@@ -150,6 +152,7 @@ func CpuPrepared() bool {
 }
 
 func CpuMetrics() []*model.MetricValue {
+	// 判断历史点是否填充完成
 	if !CpuPrepared() {
 		return []*model.MetricValue{}
 	}

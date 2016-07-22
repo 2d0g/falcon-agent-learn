@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// 采集负载数据
 func LoadAvgMetrics() []*model.MetricValue {
 	load, err := nux.LoadAvg()
 	if err != nil {

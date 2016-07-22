@@ -20,11 +20,12 @@ func NewMetricValue(metric string, val interface{}, dataType string, tags ...str
 
 	return &mv
 }
-
+// 原值类型
 func GaugeValue(metric string, val interface{}, tags ...string) *model.MetricValue {
 	return NewMetricValue(metric, val, "GAUGE", tags...)
 }
 
+// 计数器类型
 func CounterValue(metric string, val interface{}, tags ...string) *model.MetricValue {
 	return NewMetricValue(metric, val, "COUNTER", tags...)
 }

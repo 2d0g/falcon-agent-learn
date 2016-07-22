@@ -37,13 +37,17 @@ func main() {
 	funcs.BuildMappers()
 
 	go cron.InitDataHistory()
-
+	// 上报本机状态
 	cron.ReportAgentStatus()
+	// 同步插件
 	cron.SyncMinePlugins()
+	// 同步监控端口、路径、进程和URL
 	cron.SyncBuiltinMetrics()
+	// 后门调试agent,允许执行shell指令的ip列表
 	cron.SyncTrustableIps()
+	// 开始数据次采集
 	cron.Collect()
-
+	// 启动dashboard server
 	go http.Start()
 
 	select {}

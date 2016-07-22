@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// 执行shell指令采集socket信息
 func SocketStatSummaryMetrics() (L []*model.MetricValue) {
 	ssMap, err := nux.SocketStatSummary()
 	if err != nil {

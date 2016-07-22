@@ -11,8 +11,9 @@ func NetMetrics() []*model.MetricValue {
 	return CoreNetMetrics(g.Config().Collector.IfacePrefix)
 }
 
+// 采集根据配置文件过滤后的网卡数据
 func CoreNetMetrics(ifacePrefix []string) []*model.MetricValue {
-
+	// 网卡数据文件,持续增长
 	netIfs, err := nux.NetIfs(ifacePrefix)
 	if err != nil {
 		log.Println(err)

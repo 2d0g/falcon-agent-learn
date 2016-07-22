@@ -13,6 +13,7 @@ type Dto struct {
 	Data interface{} `json:"data"`
 }
 
+// 配置路由信息
 func init() {
 	configAdminRoutes()
 	configCpuRoutes()
@@ -56,11 +57,13 @@ func AutoRender(w http.ResponseWriter, data interface{}, err error) {
 	RenderDataJson(w, data)
 }
 
+// 启动http服务
 func Start() {
+	// 配置文件是否开启http
 	if !g.Config().Http.Enabled {
 		return
 	}
-
+	// 读取监听端口
 	addr := g.Config().Http.Listen
 	if addr == "" {
 		return
@@ -70,7 +73,7 @@ func Start() {
 		Addr:           addr,
 		MaxHeaderBytes: 1 << 30,
 	}
-
+	// 启动http监听服务
 	log.Println("listening", addr)
 	log.Fatalln(s.ListenAndServe())
 }
